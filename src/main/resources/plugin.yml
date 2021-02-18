@@ -1,0 +1,17 @@
+name: MbBaueventBewertungen
+version: ${project.version}
+main: de.minebench.bauevent.bewertungen.MbBaueventBewertungen
+api-version: 1.13
+depend: [WorldGuard]
+authors: [Phoenix616]
+website: https://minebench.de
+commands:
+  bewertung:
+    aliases:
+      - baueventbewertungen
+      - baueventbewertung
+      - baueventbewerten
+      - bewerten
+      - bewetungen
+    usage: /<command>
+    permission: mbbb.command

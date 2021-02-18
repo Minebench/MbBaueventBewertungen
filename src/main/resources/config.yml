@@ -1,0 +1,13 @@
+language: de
+
+mysql:
+  host: localhost
+  port: 3306
+  database: database
+  user: minecraft
+  pass: password
+  table: baueventbewertungen
+
+rateable-regions:
+  world:
+    - regionname

@@ -1,0 +1,14 @@
+reloaded: "&eConfig reloaded"
+no-region: "&cNo region found"
+cant-rate-own: "&cYou can't rate your own region"
+rated-all: "&aYou have rated all available regions! Thank you!"
+teleported: "&aTeleported to region of %owners%. Type [&e/bewertungen](/bewertungen)&a again to rate it!"
+rated: "&aYou have rated &e%owners%'s&a region &e%rating%&a stars! You need to rate all regions for your rating to count!"
+gui:
+  rate:
+    title: "&8Rate %owners%'s region"
+    entry: "&aRate &e%rating% stars"
+    cancel: "&cStop rating %owners%'s region"
+    confirm: |-
+      &aConfirm you rating of &e%rating%&a stars
+      &7Teleports to next region

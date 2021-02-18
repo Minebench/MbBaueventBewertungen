@@ -1,0 +1,14 @@
+reloaded: "&eKonfiguration neu geladen!"
+no-region: "&cKeine Region gefunden!"
+cant-rate-own: "&cDu kannst deine eigene Region nicht bewerten!"
+rated-all: "&aDu hast alle verfügbaren Regionen bewertet! Danke!"
+teleported: "&aZu Region von %owners% teleportiert. Führe [&e/bewertungen](/bewertungen)&a aus um es zu bewerten!"
+rated: "&aDu hast &e%owners%s&a Region mit &e%rating%&a Sternen bewerted! Du musst alle Regionen bewerten damit deine Wertung gezählt werden kann!"
+gui:
+  rate:
+    title: "&8Bewerte %owners%s Region"
+    entry: "&aVergebe &e%rating% Sterne"
+    cancel: "&cGUI schließen"
+    confirm: |-
+      &a%owners%s region &e%rating%&a Sterne geben
+      &7Teleportiert zur nächsten Region!
