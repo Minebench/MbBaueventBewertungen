@@ -12,23 +12,23 @@ gui:
     confirm: |-
       &a%owners%s region &e%rating%&a Sterne geben
       &7Teleportiert zur nächsten Region!
-    regions:
-      title: "&8Wähle die Regionen"
-      entry:
-        enabled: |-
-          &aRegion von %owners%
-          &f%id%
-          &aBewertbar!
-          &7Linksklick: Bewertungen abzuschalten
-          &7Rechtsklick: Teleportieren
-        disabled: |-
-          &aRegion von %owners%
-          &f%id%
-          &cNicht bewertbar!
-          &7Linksklick: Bewertungen einschalten
-          &7Rechtsklick: Teleportieren
-      previous: "&fVorherige Seite (%prevpage%/%pages%)"
-      next: "&fNächste Seite (%nextpage%/%pages%)"
-      remove: "&eRegion %region% ist &cnicht mehr bewertbar"
-      added: "&eRegion %region% ist &anun bewertbar"
-      teleported: "&aZu Region von %owners% teleportiert. Führe [&e/bewertungen admin](/bewertungen admin)&a aus um den Bewertungsstatus zu ändern!"
+  regions:
+    title: "&8Wähle die Regionen"
+    entry:
+      enabled: |-
+        &aRegion von %owners%
+        &f%id%
+        &aBewertbar!
+        &7Linksklick: Bewertungen abzuschalten
+        &7Rechtsklick: Teleportieren
+      disabled: |-
+        &aRegion von %owners%
+        &f%id%
+        &cNicht bewertbar!
+        &7Linksklick: Bewertungen einschalten
+        &7Rechtsklick: Teleportieren
+    previous: "&fVorherige Seite (%prevpage%/%pages%)"
+    next: "&fNächste Seite (%nextpage%/%pages%)"
+    remove: "&eRegion %region% ist &cnicht mehr bewertbar"
+    added: "&eRegion %region% ist &anun bewertbar"
+    teleported: "&aZu Region von %owners% teleportiert. Führe [&e/bewertungen admin](/bewertungen admin)&a aus um den Bewertungsstatus zu ändern!"
