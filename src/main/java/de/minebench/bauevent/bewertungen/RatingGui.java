@@ -46,7 +46,13 @@ public class RatingGui {
 
     public RatingGui(MbBaueventBewertungen plugin, Player player, Bewertung bewertung, ProtectedRegion region) {
         String owners = region.getOwners().toPlayersString(plugin.getWorldGuard().getProfileCache()).replace("*", "");
-        InventoryGui gui = new InventoryGui(plugin, plugin.getMessage(player, "gui.rate.title", "owners", owners), SETUP);
+        String shortOwners;
+        if (owners.length() > 23) {
+            shortOwners = owners.substring(0, 20) + "...";
+        } else {
+            shortOwners = owners;
+        }
+        InventoryGui gui = new InventoryGui(plugin, plugin.getMessage(player, "gui.rate.title", "owners", shortOwners), SETUP);
         gui.setFiller(new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
 
         GuiElementGroup sGroup = new GuiElementGroup('s');
@@ -62,7 +68,7 @@ public class RatingGui {
                             click.getGui().draw();
                         }
                         return true;
-                    }, plugin.getMessage(player, "gui.rate.entry", "rating", String.valueOf(finalI), "owners", owners))));
+                    }, plugin.getMessage(player, "gui.rate.entry", "rating", String.valueOf(finalI), "owners", shortOwners))));
             Function<HumanEntity, GuiElement> createSelector = viewer -> {
                 if (rating == finalI) {
                     return new StaticGuiElement('i', new ItemStack(Material.YELLOW_STAINED_GLASS_PANE), " ");
@@ -93,7 +99,7 @@ public class RatingGui {
                     plugin.save(bewertung);
                     plugin.teleportToNewRegion(player, bewertung);
                     return true;
-                }, plugin.getMessage(player, "gui.rate.confirm", "owners", owners, "rating", String.valueOf(rating)));
+                }, plugin.getMessage(player, "gui.rate.confirm", "owners", shortOwners, "rating", String.valueOf(rating)));
             } else {
                 return gui.getFiller();
             }
