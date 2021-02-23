@@ -223,7 +223,7 @@ public final class MbBaueventBewertungen extends JavaPlugin {
             sender.sendMessage(getComponents(sender, "gui.regions.added", "region", regionId));
         }
         for (Map.Entry<String, Collection<String>> entry : rateableRegions.asMap().entrySet()) {
-            getConfig().set("rateable." + entry.getKey(), new ArrayList<>(entry.getValue()));
+            getConfig().set("rateable-regions." + entry.getKey(), new ArrayList<>(entry.getValue()));
         }
         saveConfig();
     }
