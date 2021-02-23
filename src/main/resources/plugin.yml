@@ -13,6 +13,6 @@ commands:
       - baueventbewertung
       - baueventbewerten
       - bewerten
-      - bewetungen
+      - bewertungen
     usage: /<command>
     permission: mbbb.command
