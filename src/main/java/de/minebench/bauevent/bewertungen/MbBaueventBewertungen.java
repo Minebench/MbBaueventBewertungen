@@ -39,6 +39,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -97,11 +98,11 @@ public final class MbBaueventBewertungen extends JavaPlugin {
                 loadConfig();
                 sender.sendMessage(getComponents(sender, "reloaded"));
                 return true;
-            } else if ("admin".equalsIgnoreCase(args[0]) && sender.hasPermission("mbbb.command.admin")) {
-
+            } else if ("admin".equalsIgnoreCase(args[0]) && sender instanceof Player && sender.hasPermission("mbbb.command.admin")) {
+                new RegionSelectionGui(this, (Player) sender);
                 return true;
             }
-        } else if (sender instanceof Player) {
+        } else if (sender instanceof Player && sender.hasPermission("mbbb.command.rate")) {
             Bewertung bewertung = bewertungen.get(((Player) sender).getUniqueId());
             if (bewertung == null) {
                 bewertung = new Bewertung(((Player) sender).getUniqueId(), sender.getName());
@@ -146,7 +147,7 @@ public final class MbBaueventBewertungen extends JavaPlugin {
 
             bewertung.setLastViewed(toRate.getId());
             if (teleport) {
-                teleportToRegion((Player) sender, toRate);
+                teleportToRegion((Player) sender, toRate, "teleported");
             } else {
                 new RatingGui(this, (Player) sender, bewertung, toRate);
             }
@@ -162,10 +163,10 @@ public final class MbBaueventBewertungen extends JavaPlugin {
             return;
         }
         bewertung.setLastViewed(region.getId());
-        teleportToRegion(player, region);
+        teleportToRegion(player, region, "teleported");
     }
 
-    private void teleportToRegion(Player player, ProtectedRegion region) {
+    void teleportToRegion(Player player, ProtectedRegion region, String messageKey) {
         com.sk89q.worldedit.util.Location location = region.getFlag(Flags.TELE_LOC);
         if (location == null) {
             location = new com.sk89q.worldedit.util.Location(BukkitAdapter.adapt(player.getWorld()),
@@ -176,7 +177,7 @@ public final class MbBaueventBewertungen extends JavaPlugin {
         com.sk89q.worldedit.util.Location finalLocation = location;
         player.teleportAsync(BukkitAdapter.adapt(location)).thenAccept((success) -> {
             if (success) {
-                player.sendMessage(getComponents(player, "teleported", "owners", region.getOwners().toPlayersString(wg.getProfileCache())));
+                player.sendMessage(getComponents(player, messageKey, "owners", region.getOwners().toPlayersString(wg.getProfileCache()).replace("*", "")));
             } else {
                 player.sendMessage("Error teleporting to " + finalLocation);
             }
@@ -209,8 +210,22 @@ public final class MbBaueventBewertungen extends JavaPlugin {
         return null;
     }
 
-    private boolean isRateable(World world, ProtectedRegion region) {
+    boolean isRateable(World world, ProtectedRegion region) {
         return rateableRegions.get(world.getName()).contains(region.getId());
+    }
+
+    void toggleRateable(CommandSender sender, String world, String regionId) {
+        if (rateableRegions.containsEntry(world, regionId)) {
+            rateableRegions.remove(world, regionId);
+            sender.sendMessage(getComponents(sender, "gui.regions.remove", "region", regionId));
+        } else {
+            rateableRegions.put(world, regionId);
+            sender.sendMessage(getComponents(sender, "gui.regions.added", "region", regionId));
+        }
+        for (Map.Entry<String, Collection<String>> entry : rateableRegions.asMap().entrySet()) {
+            getConfig().set("rateable." + entry.getKey(), new ArrayList<>(entry.getValue()));
+        }
+        saveConfig();
     }
 
     @Override

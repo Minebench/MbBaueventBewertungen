@@ -12,3 +12,23 @@ gui:
     confirm: |-
       &aConfirm you rating of &e%rating%&a stars
       &7Teleports to next region
+  regions:
+    title: "&8Select rateable regions"
+    entry:
+      enabled: |-
+        &aRegion by %owners%
+        &f%id%
+        &aRateable!
+        &7Left click to disable rating
+        &7Right click to teleport
+      disabled: |-
+        &aRegion by %owners%
+        &f%id%
+        &cNot rateable!
+        &7Left click to enable rating
+        &7Right click to teleport
+    previous: "Previous page (%prevpage%/%pages%)"
+    next: "Next page (%nextpage%/%pages%)"
+    remove: "&eRegion %region% is &cno longer rateable"
+    added: "&eRegion %region% is &anow rateable"
+    teleported: "&aTeleported to region of %owners%. Type [&e/bewertungen admin](/bewertungen admin)&a again to (un)select!"

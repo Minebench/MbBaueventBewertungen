@@ -8,6 +8,7 @@ website: https://minebench.de
 commands:
   bewertung:
     aliases:
+      - mbbb
       - baueventbewertungen
       - baueventbewertung
       - baueventbewerten
