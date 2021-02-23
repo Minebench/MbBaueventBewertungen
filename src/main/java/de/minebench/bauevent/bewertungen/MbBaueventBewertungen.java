@@ -170,7 +170,7 @@ public final class MbBaueventBewertungen extends JavaPlugin {
         com.sk89q.worldedit.util.Location location = region.getFlag(Flags.TELE_LOC);
         if (location == null) {
             location = new com.sk89q.worldedit.util.Location(BukkitAdapter.adapt(player.getWorld()),
-                    region.getMaximumPoint().add(region.getMaximumPoint().subtract(region.getMinimumPoint())).toVector3())
+                    region.getMinimumPoint().add(region.getMaximumPoint().subtract(region.getMinimumPoint())).toVector3())
                     .setYaw(player.getEyeLocation().getYaw())
                     .setPitch(player.getEyeLocation().getPitch());
         }
