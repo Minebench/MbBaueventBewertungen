@@ -92,6 +92,9 @@ public class WinnersGui {
                 gui.addElement(new StaticGuiElement(String.valueOf(cell.getRowKey()).charAt(0), new ItemStack(getMaterial(cell.getRowKey())), " "));
             }
             String owners = cell.getValue().getOwners().toPlayersString(plugin.getWorldGuard().getProfileCache()).replace("*", "");
+            if (owners.length() > 35) {
+                owners = owners.substring(0, 32) + "...";
+            }
 
             ItemStack icon = new ItemStack(Material.DIRT);
             if (!cell.getValue().getOwners().getUniqueIds().isEmpty()) {
