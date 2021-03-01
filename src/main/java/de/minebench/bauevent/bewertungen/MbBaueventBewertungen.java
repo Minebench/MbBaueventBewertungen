@@ -20,6 +20,8 @@ package de.minebench.bauevent.bewertungen;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -42,15 +44,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public final class MbBaueventBewertungen extends JavaPlugin {
     private LanguageManager lang;
     private WorldGuard wg;
 
+    private int winnersCount;
     private final Multimap<String, String> rateableRegions = MultimapBuilder.hashKeys().hashSetValues().build();
     private final Map<UUID, Bewertung> bewertungen = new HashMap<>();
     private ConfigAccessor bewertungsConfig;
@@ -68,6 +73,8 @@ public final class MbBaueventBewertungen extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
         lang = new LanguageManager(this, getConfig().getString("language"));
+
+        winnersCount = getConfig().getInt("winners-count");
 
         rateableRegions.clear();
         ConfigurationSection rateableRegionsSection = getConfig().getConfigurationSection("rateable-regions");
@@ -97,6 +104,9 @@ public final class MbBaueventBewertungen extends JavaPlugin {
             if ("reload".equalsIgnoreCase(args[0]) && sender.hasPermission("mbbb.command.reload")) {
                 loadConfig();
                 sender.sendMessage(getComponents(sender, "reloaded"));
+                return true;
+            } else if (sender instanceof Player && "winner".equalsIgnoreCase(args[0]) && sender.hasPermission("mbbb.command.winner")) {
+                new WinnersGui(this, (Player) sender);
                 return true;
             } else if ("admin".equalsIgnoreCase(args[0]) && sender instanceof Player && sender.hasPermission("mbbb.command.admin")) {
                 new RegionSelectionGui(this, (Player) sender);
@@ -151,6 +161,9 @@ public final class MbBaueventBewertungen extends JavaPlugin {
             } else {
                 new RatingGui(this, (Player) sender, bewertung, toRate);
             }
+            return true;
+        } else if (sender instanceof Player && sender.hasPermission("mbbb.viewwinner")) {
+            new WinnersGui(this, (Player) sender);
             return true;
         }
         return false;
@@ -248,5 +261,75 @@ public final class MbBaueventBewertungen extends JavaPlugin {
     public void save(Bewertung bewertung) {
         bewertungsConfig.getConfig().set("bewertungen." + bewertung.getPlayerId().toString(), bewertung);
         bewertungsConfig.saveConfig();
+    }
+
+    public Table<Integer, Double, ProtectedRegion> getWinnerRegions(World world) {
+        RegionManager rm = wg.getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+        if (rm == null) {
+            return TreeBasedTable.create();
+        }
+
+        Map<ProtectedRegion, Double> rating = new HashMap<>();
+
+        List<Bewertung> completed = new ArrayList<>();
+        for (Bewertung bewertung : bewertungen.values()) {
+            if (isCompleted(bewertung, world)) {
+                completed.add(bewertung);
+            }
+        }
+
+        for (String regionId : rateableRegions.get(world.getName())) {
+            ProtectedRegion region = rm.getRegion(regionId);
+            if (region == null) {
+                continue;
+            }
+            int amount = 0;
+            int stars = 0;
+            for (Bewertung bewertung : completed) {
+                if (bewertung.getRegions().containsKey(regionId)) {
+                    amount++;
+                    stars += bewertung.getRegions().get(regionId);
+                }
+            }
+            if (amount > 0) {
+                rating.put(region, (double) stars / amount);
+            }
+        }
+
+        Table<Integer, Double, ProtectedRegion> table = TreeBasedTable.create();
+
+        int place = 0;
+        double previous = -1;
+        for (Map.Entry<ProtectedRegion, Double> entry : rating.entrySet().stream()
+                .sorted((o1, o2) -> Double.compare(o2.getValue(), o1.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (existing, added) -> added, LinkedHashMap::new)).entrySet()) {
+            if (Math.round(entry.getValue() * 100) != Math.round(previous * 100)) {
+                place++;
+                if (place > winnersCount) {
+                    break;
+                }
+                previous = entry.getValue();
+            }
+            table.put(place, entry.getValue(), entry.getKey());
+        }
+        return table;
+    }
+
+    private boolean isCompleted(Bewertung bewertung, World world) {
+        RegionManager rm = wg.getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+        if (rm == null) {
+            return false;
+        }
+
+        for (String regionId : rateableRegions.get(world.getName())) {
+            if (!bewertung.getRegions().containsKey(regionId)) {
+                ProtectedRegion region = rm.getRegion(regionId);
+                if (region == null || !region.getOwners().getUniqueIds().contains(bewertung.getPlayerId())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

@@ -8,6 +8,8 @@ mysql:
   pass: password
   table: baueventbewertungen
 
+winners-count: 3
+
 rateable-regions:
   world:
     - regionname

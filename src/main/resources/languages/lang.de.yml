@@ -32,3 +32,11 @@ gui:
     remove: "&eRegion %region% ist &cnicht mehr bewertbar"
     added: "&eRegion %region% ist &anun bewertbar"
     teleported: "&aZu Region von %owners% teleportiert. Führe [&e/bewertungen admin](/bewertungen admin)&a aus um den Bewertungsstatus zu ändern!"
+  winners:
+    title: "&8Gewinner"
+    entry: |-
+      &6%place%. Platz:
+      &f%owners%
+      &6%rating% Sterne
+      &7Linksklick: Teleportieren
+    teleported: "&aZu Region von %owners% teleportiert."

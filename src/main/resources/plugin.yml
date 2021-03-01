@@ -16,3 +16,7 @@ commands:
       - bewertungen
     usage: /<command>
     permission: mbbb.command
+permissions:
+  mbbb.viewwinner:
+    default: true
+    description: View winners with the command

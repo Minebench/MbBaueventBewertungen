@@ -32,3 +32,11 @@ gui:
     remove: "&eRegion %region% is &cno longer rateable"
     added: "&eRegion %region% is &anow rateable"
     teleported: "&aTeleported to region of %owners%. Type [&e/bewertungen admin](/bewertungen admin)&a again to (un)select!"
+  winners:
+    title: "&8Winners"
+    entry: |-
+      &6%place%. Place:
+      &f%owners%
+      &6%rating% Stars
+      &7Left click to teleport
+    teleported: "&aTeleported to region of %owners%"
