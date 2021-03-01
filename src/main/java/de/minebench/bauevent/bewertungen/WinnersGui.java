@@ -130,7 +130,7 @@ public class WinnersGui {
             case 2:
                 return Material.IRON_INGOT;
             case 3:
-                return Material.DIRT;
+                return Material.OAK_PLANKS;
             default:
                 return Material.GRAY_STAINED_GLASS_PANE;
         }
