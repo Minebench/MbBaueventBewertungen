@@ -20,8 +20,6 @@ package de.minebench.bauevent.bewertungen;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Table;
-import com.google.common.collect.TreeBasedTable;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -263,10 +261,10 @@ public final class MbBaueventBewertungen extends JavaPlugin {
         bewertungsConfig.saveConfig();
     }
 
-    public Table<Integer, Double, ProtectedRegion> getWinnerRegions(World world) {
+    public List<Placement> getWinnerRegions(World world) {
         RegionManager rm = wg.getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
         if (rm == null) {
-            return TreeBasedTable.create();
+            return Collections.emptyList();
         }
 
         Map<ProtectedRegion, Double> rating = new HashMap<>();
@@ -296,7 +294,7 @@ public final class MbBaueventBewertungen extends JavaPlugin {
             }
         }
 
-        Table<Integer, Double, ProtectedRegion> table = TreeBasedTable.create();
+        List<Placement> list = new ArrayList<>();
 
         int place = 0;
         double previous = -1;
@@ -310,9 +308,9 @@ public final class MbBaueventBewertungen extends JavaPlugin {
                 }
                 previous = entry.getValue();
             }
-            table.put(place, entry.getValue(), entry.getKey());
+            list.add(new Placement(place, entry.getKey(), entry.getValue()));
         }
-        return table;
+        return list;
     }
 
     private boolean isCompleted(Bewertung bewertung, World world) {

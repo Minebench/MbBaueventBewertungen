@@ -19,14 +19,8 @@ package de.minebench.bauevent.bewertungen;
  */
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.google.common.collect.Table;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.util.profile.Profile;
-import de.themoep.inventorygui.DynamicGuiElement;
 import de.themoep.inventorygui.GuiElementGroup;
-import de.themoep.inventorygui.GuiPageElement;
 import de.themoep.inventorygui.InventoryGui;
 import de.themoep.inventorygui.StaticGuiElement;
 import org.bukkit.Material;
@@ -35,20 +29,16 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 public class WinnersGui {
 
     public WinnersGui(MbBaueventBewertungen plugin, Player player) {
 
-        Table<Integer, Double, ProtectedRegion> winnerRegions = plugin.getWinnerRegions(player.getWorld());
+        List<Placement> winnerRegions = plugin.getWinnerRegions(player.getWorld());
 
-        int amount = winnerRegions.cellSet().size();
+        int amount = winnerRegions.size();
 
         if (amount == 0) {
             player.sendMessage(plugin.getComponents(player, "no-region"));
@@ -67,9 +57,9 @@ public class WinnersGui {
         } else {
             setup = new String[amount];
             int i = 0;
-            for (Table.Cell<Integer, Double, ProtectedRegion> cell : winnerRegions.cellSet()) {
-                if (cell.getRowKey() < 4) {
-                    setup[i] = String.valueOf(cell.getRowKey()).repeat(4) + "r" + String.valueOf(cell.getRowKey()).repeat(4);
+            for (Placement cell : winnerRegions) {
+                if (cell.getPlace() < 4) {
+                    setup[i] = String.valueOf(cell.getPlace()).repeat(4) + "r" + String.valueOf(cell.getPlace()).repeat(4);
                 } else {
                     setup[i] = "    r    ";
                 }
@@ -83,22 +73,22 @@ public class WinnersGui {
         GuiElementGroup group = new GuiElementGroup('r');
 
         int i = 0;
-        for (Table.Cell<Integer, Double, ProtectedRegion> cell : winnerRegions.cellSet()) {
+        for (Placement cell : winnerRegions) {
             i++;
             if (i >= 9) {
                 break;
             }
-            if (cell.getRowKey() < 4) {
-                gui.addElement(new StaticGuiElement(String.valueOf(cell.getRowKey()).charAt(0), new ItemStack(getMaterial(cell.getRowKey())), " "));
+            if (cell.getPlace() < 4) {
+                gui.addElement(new StaticGuiElement(String.valueOf(cell.getPlace()).charAt(0), new ItemStack(getMaterial(cell.getPlace())), " "));
             }
-            String owners = cell.getValue().getOwners().toPlayersString(plugin.getWorldGuard().getProfileCache()).replace("*", "");
+            String owners = cell.getRegion().getOwners().toPlayersString(plugin.getWorldGuard().getProfileCache()).replace("*", "");
             if (owners.length() > 35) {
                 owners = owners.substring(0, 32) + "...";
             }
 
             ItemStack icon = new ItemStack(Material.DIRT);
-            if (!cell.getValue().getOwners().getUniqueIds().isEmpty()) {
-                UUID firstOwner = cell.getValue().getOwners().getUniqueIds().iterator().next();
+            if (!cell.getRegion().getOwners().getUniqueIds().isEmpty()) {
+                UUID firstOwner = cell.getRegion().getOwners().getUniqueIds().iterator().next();
                 Profile profile = plugin.getWorldGuard().getProfileCache().getIfPresent(firstOwner);
                 if (profile != null && profile.getName() != null) {
                     icon = new ItemStack(Material.PLAYER_HEAD);
@@ -110,14 +100,14 @@ public class WinnersGui {
             }
             group.addElement(new StaticGuiElement('r', icon, click -> {
                 if (click.getType() == ClickType.LEFT) {
-                    plugin.teleportToRegion((Player) click.getWhoClicked(), cell.getValue(), "gui.winners.teleported");
+                    plugin.teleportToRegion((Player) click.getWhoClicked(), cell.getRegion(), "gui.winners.teleported");
                 }
                 return true;
             }, plugin.getMessage(player, "gui.winners.entry",
                     "owners", owners,
-                    "id", cell.getValue().getId(),
-                    "rating", String.format("%.2f", cell.getColumnKey()),
-                    "place", String.valueOf(cell.getRowKey())
+                    "id", cell.getRegion().getId(),
+                    "rating", String.format("%.2f", cell.getRating()),
+                    "place", String.valueOf(cell.getPlace())
             )));
         }
 
